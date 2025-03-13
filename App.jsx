@@ -13,12 +13,13 @@ const App = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <NavigationContainer>
-        <Header /> 
+        {/* <Header/>  */}
         <Stack.Navigator
           screenOptions={{
             headerShown: false, 
           }}
         >
+        
           <Stack.Screen name="Login" component={Loginform} />
           <Stack.Screen name="dash" component={Dashboard} />
         </Stack.Navigator>

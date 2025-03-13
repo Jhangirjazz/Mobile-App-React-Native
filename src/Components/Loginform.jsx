@@ -2,6 +2,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'reac
 import React, { useState } from 'react';
 import axios from 'axios'; 
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage, { AsyncStorageStatic } from '@react-native-async-storage/async-storage';
 
 const Loginform = ({ navigation }) => {
 
@@ -38,6 +39,12 @@ const Loginform = ({ navigation }) => {
             console.log("API Response:", response.data);
     
             if (response.data.state === "Success") {
+                 await AsyncStorage.setItem('userdata', JSON.stringify({
+                    user_id: response.data.user_id,
+                    user_name: response.data.user_name,
+                    subscription_state: response.data.subscription_state,
+                 }))    
+
                 Alert.alert('Success', 'Login successful!');
                 nav.navigate('dash'); 
             } else {
@@ -52,9 +59,16 @@ const Loginform = ({ navigation }) => {
     };
 
     return (
+        <>
+        <View style={style.topbar}>
+                          <Text style={style.topbarText}>RealCore Solutions</Text>
+                      </View>   
+
         <View style={style.container}>
             <Text style={style.heading}>Login</Text>
 
+          
+          
           
             <TextInput
                 style={style.input}
@@ -87,6 +101,8 @@ const Loginform = ({ navigation }) => {
                 </Text>
             </TouchableOpacity>
         </View>
+        
+        </>
     );
 };
 
@@ -119,7 +135,7 @@ const style = StyleSheet.create({
     },
 
     button: {
-        backgroundColor: '#10a209',
+        backgroundColor: '#1A237E',
         paddingVertical: 15,
         borderRadius: 10,
         alignItems: 'center',
@@ -129,6 +145,17 @@ const style = StyleSheet.create({
         color: '#fff',
         fontSize: 18,
         fontWeight: 'bold',
+    },
+
+    topbar: {
+        backgroundColor: "#1A237E",
+        paddingVertical: 22
+    },
+    topbarText: {
+        color: "white",
+        fontSize: 22,
+        textAlign: "center",
+        fontWeight: "800",
     },
 });
 

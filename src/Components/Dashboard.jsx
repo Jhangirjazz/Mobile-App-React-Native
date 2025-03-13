@@ -1,16 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, ScrollView, ActivityIndicator, Image } from 'react-native';
+import { View, Text, FlatList, StyleSheet, ScrollView, ActivityIndicator, Image, Button, Touchable, TouchableOpacity } from 'react-native';
 import axios from 'axios';
+import AsyncStorage, { AsyncStorageStatic } from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
+import Header from './Header';
 
 
 
 
-export default function Dashboard() {
+export default function Dashboard( {navigation}) {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true); 
-    const [error, setError] = useState(null); 
+    const [error, setError] = useState(null);
+    const [userData , SetUserData] = useState (null);
+    
     const api = `http://3.109.176.31/SeePrime/APIS/SELECT.php?select_id=select_content&admin_portal=Y`
    
+
     const fetchData = async () => {
         try {
             const res = await axios.get(api);
@@ -24,8 +30,17 @@ export default function Dashboard() {
         }
     };
 
+    const getData = async ()=>{
+        const data = await AsyncStorage.getItem('userdata') 
+        if(data){
+            SetUserData(JSON.parse(data))
+        }
+    }
+
+ 
     // Use useEffect to call fetchData when the component mounts
     useEffect(() => {
+        getData();
         fetchData();
     }, []);
 
@@ -34,6 +49,7 @@ export default function Dashboard() {
         <View style={styles.row}>
             <Text style={styles.cell}>{item.CONTENT_ID}</Text>
             <Text style={styles.cell}>{item.TITLE}</Text>
+            <Image source={{uri: `http://3.109.176.31/SeePrime/Content/Images/${item.THUMBNAIL_PATH}`}} width={100} height={100} resizeMode='cover' />
             <Text style={styles.cell}>{item.IS_PREMIUM}</Text>
             <Text style={styles.cell}>{item.FREE_TO_VIEW_TILL}</Text>
             <Text style={styles.cell}>{item.PARTWISE}</Text>
@@ -65,14 +81,33 @@ export default function Dashboard() {
 
     return (
         <>
+        <Header/>
             
             <View style={styles.container}>
+            <View>
+            
+                        {
+                            userData ? (
+                                <>
+                                    <Text style={styles.log}  >User Id: {userData.user_id}</Text>
+                                    <Text style={styles.log} >User Name: {userData.user_name}</Text>
+                                    <Text style={styles.log} >Subscription State : {userData.subscription_state}</Text>
+                                </>
+                            ): (
+                                <Text>Loading Data...</Text>
+                            )
+                        }
+            
+
+                </View>
                 <ScrollView horizontal>
                     <View>
+                  
                         {/* Table Header */}
                         <View style={styles.header}>
                             <Text style={styles.headerCell}>ID</Text>
                             <Text style={styles.headerCell}>Title</Text>
+                            <Text style={styles.headerCell}>Thumbnail</Text>
                             <Text style={styles.headerCell}>Premium</Text>
                             <Text style={styles.headerCell}>Date</Text>
                             <Text style={styles.headerCell}>Seasonal</Text>
@@ -90,12 +125,21 @@ export default function Dashboard() {
                         />
                     </View>
                 </ScrollView>
+                
             </View>
         </>
     );
 }
 
 const styles = StyleSheet.create({
+     
+    log:{
+        textAlign:'center',
+        fontSize:20,
+        fontWeight:'bold',
+        padding: 5,   
+    },
+    
     container: {
         flex: 1,
         padding: 16,
@@ -103,11 +147,11 @@ const styles = StyleSheet.create({
     },
     header: {
         flexDirection: 'row',
-        backgroundColor: '#10a209',
-        padding: 16,
+        backgroundColor: '#1A237E',
+        padding: 20,
     },
     headerCell: {
-        width: 150, // Adjust width as needed
+        width: 140, // Adjust width as needed
         color:'white',
         fontWeight: 'bold',
         textAlign: 'center',
@@ -116,7 +160,7 @@ const styles = StyleSheet.create({
     row: {
         flexDirection: 'row',
         borderBottomWidth: 1,
-        borderBottomColor: '#10a209',
+        borderBottomColor: '#1A237E',
         padding: 10,
     },
     cell: {
@@ -139,6 +183,23 @@ const styles = StyleSheet.create({
         color: 'red',
     },
     flatList: {
-        width: '100%', // Ensure FlatList takes full width
+        textAlign : 'center',
+        width: '100%', 
     },
+    logout:{
+        backgroundColor: '#ff4444', 
+        padding: 15,
+        borderRadius: 10,
+        alignItems: 'center',
+        margin: 20,
+
+    },
+    ButtonText:{
+        color: '#fff',
+        fontSize: 18,
+        fontWeight: 'bold',
+
+    },
+
+
 });

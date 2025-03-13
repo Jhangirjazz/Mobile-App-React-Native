@@ -1,20 +1,34 @@
 import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Modal, SafeAreaView } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
 
 export default function Header() {
+    const navigation = useNavigation();
     const [menuVisible, setMenuVisible] = useState(false);
+    
+   
 
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
     };
 
+    const handleLogOut = async () =>{
+        try {
+            await AsyncStorage.removeItem('userdata');
+            setMenuVisible(false);
+            navigation.navigate('Login')
+        }
+        catch (error){   
+              console.log('Error During Logout', error)  
+        }
+    };
+
 
     return (
         <>
-            <View style={styles.topbar}>
-                <Text style={styles.topbarText}>Welcome</Text>
-            </View>
+            
             <View style={styles.container}>
                 {/* Column 1: Logo */}
                 <View style={styles.logoContainer}>
@@ -58,6 +72,9 @@ export default function Header() {
                             <Text style={styles.menuItem}>About</Text>
                             <Text style={styles.menuItem}>Services</Text>
                             <Text style={styles.menuItem}>Contact</Text>
+                            <TouchableOpacity style={styles.logout} onPress={handleLogOut} >
+                                                    <Text style={styles.ButtonText}>Logout</Text>
+                                        </TouchableOpacity>
                         </View>
                     </SafeAreaView>
                 </Modal>
@@ -68,20 +85,11 @@ export default function Header() {
 
 
 const styles = StyleSheet.create({
-    topbar: {
-        backgroundColor: "#10a209",
-        paddingVertical: 22
-    },
-    topbarText: {
-        color: "white",
-        fontSize: 22,
-        textAlign: "center",
-        fontWeight: "800",
-    },
+  
     container: {
         flexDirection: 'row',
         height: 80,
-        backgroundColor: '#ffffff',
+        backgroundColor: '#1A237E',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
@@ -106,7 +114,8 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 22,
         fontWeight: 'bold',
-        color: 'black',
+        color: 'white',
+        
     },
     menuContainer: {
         flex: 1,
@@ -119,7 +128,7 @@ const styles = StyleSheet.create({
     menuLine: {
         width: 25,
         height: 3,
-        backgroundColor: '#333',
+        backgroundColor: 'white',
         marginVertical: 3,
         borderRadius: 1,
     },
@@ -148,4 +157,19 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: '#eee',
     },
+    logout:{
+        backgroundColor: '#ff4444', 
+        padding: 15,
+        borderRadius: 10,
+        alignItems: 'center',
+        margin: 20,
+
+    },
+    ButtonText:{
+        color: '#fff',
+        fontSize: 18,
+        fontWeight: 'bold',
+
+    },
+
 })
