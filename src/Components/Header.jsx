@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, Modal, SafeAreaView } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, Modal, SafeAreaView,Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 
@@ -14,16 +14,31 @@ export default function Header() {
         setMenuVisible(!menuVisible);
     };
 
-    const handleLogOut = async () =>{
-        try {
-            await AsyncStorage.removeItem('userdata');
-            setMenuVisible(false);
-            navigation.navigate('Login')
-        }
-        catch (error){   
-              console.log('Error During Logout', error)  
-        }
+    
+
+    const handleLogOut = async () => {
+        Alert.alert(
+            "Confirm Logout",
+            "Are you sure you want to log out?",
+            [
+                { text: "Cancel", style: "cancel" },
+                {
+                    text: "Yes",
+                    onPress: async () => {
+                        try {
+                            await AsyncStorage.removeItem('userdata');  
+                            setMenuVisible(false);
+                            navigation.replace('Log in'); 
+                        } catch (error) {   
+                            console.log('Error During Logout:', error);
+                            Alert.alert('Error', 'Failed to log out. Please try again.');
+                        }
+                    }
+                }
+            ]
+        );
     };
+    
 
 
     return (

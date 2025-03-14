@@ -13,7 +13,6 @@ const App = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <NavigationContainer>
-        {/* <Header/>  */}
         <Stack.Navigator
           screenOptions={{
             headerShown: false, 
